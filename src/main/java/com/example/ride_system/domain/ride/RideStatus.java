@@ -5,6 +5,6 @@ public enum RideStatus {
     ACCEPTED,
     IN_PROGRESS,
     COMPLETED,
-    CANCELED,
-    DRIVER_CANCELED
+    CANCELLED,
+    DRIVER_CANCELLED
 }

@@ -1,21 +1,30 @@
 package com.example.ride_system.domain.rider;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "rider")
 public class Rider {
-    private Long riderId;
-    private String riderName;
-    private String phone;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
     private String email;
+    private String phone;
 
-    public Rider(Long riderId, String riderName, String phone, String email) {
-        this.riderId = riderId;
-        this.riderName = riderName;
-        this.phone = phone;
-        this.email = email;
-
+    protected Rider() {
+        // JPA requires no-arg constructor
     }
 
-    public Long getRiderId() { return riderId; }
-    public String getRiderName() { return riderName; }
-    public String getPhone() { return phone; }
-    public String getEmail() { return email; }
+    public Rider(String name, String email, String phone) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

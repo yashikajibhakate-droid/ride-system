@@ -1,23 +1,29 @@
 package com.example.ride_system.domain.driver;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "driver")
 public class Driver {
-    private Long driverId;
-    private String driverName;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
     private String phone;
-    private String licenseNo;
+    private String email;
+
+    @Enumerated(EnumType.STRING)
     private DriverStatus status;
-    private int completedRides;
 
-    private String currentlyDrivingVehicleNo;
+    protected Driver() {}
 
-    public Driver(Long driverId, String driverName, String phone,
-            String licenseNo, String currentlyDrivingVehicleNo, String email) {
-        this.driverId = driverId;
-        this.driverName = driverName;
+    public Driver(String name, String phone, String email) {
+        this.name = name;
         this.phone = phone;
-        this.licenseNo = licenseNo;
-        this.currentlyDrivingVehicleNo = currentlyDrivingVehicleNo;
-        this.status = DriverStatus.OFFLINE;
+        this.email = email;
+        this.status = DriverStatus.OFFLINE; // DEFAULT
     }
 
     public void goOnline() {
@@ -28,31 +34,15 @@ public class Driver {
         this.status = DriverStatus.OFFLINE;
     }
 
+    // public void assignRide() {
+    //     this.status = DriverStatus.ON_RIDE;
+    // }
+
     public DriverStatus getStatus() {
         return status;
     }
 
-    public Long getDriverId() {
-        return driverId;
-    }
-
-    public String getDriverName() {
-        return driverName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getLicenseNo() {
-        return licenseNo;
-    }
-
-    public String getCurrentlyDrivingVehicleNo() {
-        return currentlyDrivingVehicleNo;
-    }
-
-    public int getCompletedRides() {
-        return completedRides;
+    public Long getId() {
+        return id;
     }
 }
