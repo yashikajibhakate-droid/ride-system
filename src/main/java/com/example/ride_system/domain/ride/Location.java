@@ -15,6 +15,14 @@ public class Location {
         this.lon = lon;
     }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
     public boolean sameAs(Location other) {
         return Double.compare(lat, other.lat) == 0 &&
                Double.compare(lon, other.lon) == 0;

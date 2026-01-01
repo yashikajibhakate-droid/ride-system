@@ -1,73 +1,114 @@
 package com.example.ride_system.domain.ride;
 
-import com.example.ride_system.domain.driver.Driver;
-import com.example.ride_system.domain.rider.Rider;
 import jakarta.persistence.*;
-
 import java.time.Instant;
 
 @Entity
-@Table(name = "ride")
+@Table(name = "rides")
 public class Ride {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Rider rider;
+    private Long riderId;
+    private Long driverId;
 
-    @ManyToOne
-    private Driver driver;
+    private String pickup;
+    private String dropoff;
 
-    @Embedded
-    private Location pickupLocation;
+    private double pickupLat;
+    private double pickupLon;
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "lat", column = @Column(name = "dropoff_lat")),
-        @AttributeOverride(name = "lon", column = @Column(name = "dropoff_lon"))
-    })
-    private Location dropLocation;
+    private double dropoffLat;
+    private double dropoffLon;
 
     @Enumerated(EnumType.STRING)
     private RideStatus status;
 
     private Instant requestedAt;
+    private Instant acceptedAt;
     private Instant startedAt;
-    private Instant completedAt;
+    private Instant endedAt;
 
     protected Ride() {}
 
-    public Ride(Rider rider, Location pickup, Location drop) {
-        this.rider = rider;
-        this.pickupLocation = pickup;
-        this.dropLocation = drop;
-        this.status = RideStatus.REQUESTED;
-        this.requestedAt = Instant.now();
+    /* Factory method – ride creation */
+    public static Ride request(
+            Long riderId,
+            String pickup,
+            String dropoff,
+            Location pickupLocation,
+            Location dropoffLocation
+    ) {
+        Ride ride = new Ride();
+        ride.riderId = riderId;
+        ride.pickup = pickup;
+        ride.dropoff = dropoff;
+        ride.pickupLat = pickupLocation.getLat();
+        ride.pickupLon = pickupLocation.getLon();
+        ride.dropoffLat = dropoffLocation.getLat();
+        ride.dropoffLon = dropoffLocation.getLon();
+        ride.status = RideStatus.REQUESTED;
+        ride.requestedAt = Instant.now();
+        return ride;
     }
 
-    public void accept(Driver driver) {
+    /* ---- State Transitions ---- */
+
+    public void accept(Long driverId) {
         if (status != RideStatus.REQUESTED) {
             throw new IllegalStateException("Ride cannot be accepted");
         }
-        this.driver = driver;
+        this.driverId = driverId;
         this.status = RideStatus.ACCEPTED;
+        this.acceptedAt = Instant.now();
     }
 
-    public void start() {
+    public void begin() {
         if (status != RideStatus.ACCEPTED) {
-            throw new IllegalStateException("Ride not accepted");
+            throw new IllegalStateException("Ride cannot be started");
         }
         this.status = RideStatus.IN_PROGRESS;
         this.startedAt = Instant.now();
     }
 
     public void end(Location currentLocation) {
-        if (!currentLocation.sameAs(dropLocation)) {
-            throw new IllegalStateException("Not at drop location");
+        if (status != RideStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Ride cannot be ended");
         }
+
+        if (!isAtDropLocation(currentLocation)) {
+            throw new IllegalStateException("Driver not at drop location");
+        }
+
         this.status = RideStatus.COMPLETED;
-        this.completedAt = Instant.now();
+        this.endedAt = Instant.now();
+    }
+
+   public void cancelByRider(Long riderId) {
+    if (!this.riderId.equals(riderId)) {
+        throw new IllegalStateException("Rider not authorized");
+    }
+    if (status != RideStatus.REQUESTED) {
+        throw new IllegalStateException("Ride cannot be cancelled now");
+    }
+    this.status = RideStatus.CANCELLED;
+}
+
+
+    public void cancelByDriver(Long driverId) {
+        if (!this.driverId.equals(driverId)) {
+            throw new IllegalArgumentException("Invalid driver");
+        }
+        if (status == RideStatus.COMPLETED) {
+            throw new IllegalStateException("Completed ride cannot be cancelled");
+        }
+        this.status = RideStatus.CANCELLED;
+    }
+
+    private boolean isAtDropLocation(Location location) {
+        return Double.compare(location.getLat(), dropoffLat) == 0
+            && Double.compare(location.getLon(), dropoffLon) == 0;
     }
 }
