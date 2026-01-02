@@ -67,7 +67,7 @@ public class Ride {
 
     public void begin() {
         if (status != RideStatus.ACCEPTED) {
-            throw new IllegalStateException("Ride cannot be started");
+            throw new IllegalStateException("Ride not accepted yet");
         }
         this.status = RideStatus.IN_PROGRESS;
         this.startedAt = Instant.now();

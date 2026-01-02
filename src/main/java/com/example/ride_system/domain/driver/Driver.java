@@ -1,5 +1,7 @@
 package com.example.ride_system.domain.driver;
 
+import com.example.ride_system.domain.ride.Location;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +18,9 @@ public class Driver {
 
     @Enumerated(EnumType.STRING)
     private DriverStatus status;
+
+      @Embedded
+    private Location currentLocation;
 
     protected Driver() {}
 
@@ -38,8 +43,18 @@ public class Driver {
     //     this.status = DriverStatus.ON_RIDE;
     // }
 
+      public void updateLocation(Location location) {
+        this.currentLocation = location;
+    }
+
     public DriverStatus getStatus() {
         return status;
+    }
+
+    
+
+    public void setStatus(DriverStatus status) {
+        this.status = status;
     }
 
     public Long getId() {
