@@ -9,11 +9,13 @@ import com.example.ride_system.domain.driver.Driver;
 import com.example.ride_system.domain.driver.DriverStatus;
 import com.example.ride_system.domain.ride.Location;
 import com.example.ride_system.domain.ride.Ride;
+import com.example.ride_system.domain.ride.RideStatus;
 import com.example.ride_system.domain.rider.Rider;
 import com.example.ride_system.dto.request.DriverCreateRequest;
 import com.example.ride_system.repository.DriverRepository;
 import com.example.ride_system.repository.RideRepository;
 import com.example.ride_system.service.interfaces.DriverService;
+import com.example.ride_system.utils.DistanceUtil;
 
 @Service
 @Transactional
@@ -50,9 +52,37 @@ public class DriverServiceImpl implements DriverService {
         driver.updateLocation(location);
     }
 
-    @Override
+       @Override
     public List<Ride> getAvailableRides(Long driverId) {
-        return rideRepository.findAvailableRides();
+
+        // 1️⃣ Fetch driver
+        Driver driver = driverRepository.findById(driverId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Driver not found"));
+
+        // 2️⃣ Driver must have location
+        Location driverLocation = driver.getLocation();
+        if (driverLocation == null) {
+            throw new IllegalStateException("Driver location not set");
+        }
+
+        // 3️⃣ Fetch all REQUESTED rides
+        List<Ride> requestedRides =
+                rideRepository.findByStatus(RideStatus.REQUESTED);
+
+        // 4️⃣ Filter by distance <= 50 meters
+        return requestedRides.stream()
+                .filter(ride -> {
+                    double distance =
+                            DistanceUtil.distanceInMeters(
+                                    driverLocation.getLat(),
+                                    driverLocation.getLon(),
+                                    ride.getPickupLat(),
+                                    ride.getPickupLon()
+                            );
+                    return distance <= 50;
+                })
+                .toList();
     }
 
     @Override
@@ -73,17 +103,17 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void beginRide(Long rideId, Long driverId) {
+    public Ride beginRide(Long rideId, Long driverId) {
         Ride ride = rideRepository.findById(rideId).orElseThrow();
         ride.begin();
-        rideRepository.save(ride);
+        return rideRepository.save(ride);
     }
 
     @Override
-    public void endRide(Long rideId, Long driverId, Location location) {
+    public Ride endRide(Long rideId, Long driverId, Location location) {
         Ride ride = rideRepository.findById(rideId).orElseThrow();
         ride.end(location);
-        rideRepository.save(ride);
+        return rideRepository.save(ride);
     }
 
     @Override

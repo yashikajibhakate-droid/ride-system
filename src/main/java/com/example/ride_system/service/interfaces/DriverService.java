@@ -19,9 +19,9 @@ public interface DriverService {
 
     Ride acceptRide(Long rideId, Long driverId);
 
-    void beginRide(Long rideId, Long driverId);
+    Ride beginRide(Long rideId, Long driverId);
 
-    void endRide(Long rideId, Long driverId, Location location);
+    Ride endRide(Long rideId, Long driverId, Location location);
 
     void cancelRide(Long rideId, Long driverId);
 }

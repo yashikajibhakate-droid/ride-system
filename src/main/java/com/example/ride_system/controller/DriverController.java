@@ -3,6 +3,7 @@ package com.example.ride_system.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,18 +36,28 @@ public class DriverController {
     }
 
     @PatchMapping("/{driverId}/status")
-    public void updateStatus(
-            @PathVariable Long driverId,
-            @RequestParam DriverStatus status) {
-        driverService.updateStatus(driverId, status);
-    }
+public ResponseEntity<Map<String, String>> updateStatus(
+        @PathVariable Long driverId,
+        @RequestParam DriverStatus status) {
 
-    @PatchMapping("/{driverId}/location")
-    public void updateLocation(
-            @PathVariable Long driverId,
-            @RequestBody Location location) {
-        driverService.updateLocation(driverId, location);
-    }
+    driverService.updateStatus(driverId, status);
+    return ResponseEntity.ok(
+            Map.of("message", "Driver status updated successfully")
+    );
+}
+
+
+  @PatchMapping("/{driverId}/location")
+public ResponseEntity<Map<String, String>> updateLocation(
+        @PathVariable Long driverId,
+        @RequestBody Location location) {
+
+    driverService.updateLocation(driverId, location);
+
+    return ResponseEntity.ok(
+        Map.of("message", "Location updated successfully")
+    );
+}
 
     @GetMapping("/{driverId}/rides")
     public List<Ride> availableRides(@PathVariable Long driverId) {
@@ -54,24 +65,26 @@ public class DriverController {
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/accept")
-    public Ride acceptRide(
+    public ResponseEntity<Ride> acceptRide(
             @PathVariable Long driverId,
             @PathVariable Long rideId) {
-        return driverService.acceptRide(rideId, driverId);
+        return ResponseEntity.ok(driverService.acceptRide(rideId, driverId));
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/start")
-    public void startRide(
+    public ResponseEntity<Ride> startRide(
             @PathVariable Long driverId,
             @PathVariable Long rideId) {
-        driverService.beginRide(rideId, driverId);
+       return ResponseEntity.ok(driverService.beginRide(rideId, driverId));
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/end")
-    public void endRide(
-            @PathVariable Long driverId,
-            @PathVariable Long rideId,
-            @RequestBody Location location) {
-        driverService.endRide(rideId, driverId, location);
-    }
+public ResponseEntity<Ride> endRide(
+        @PathVariable Long driverId,
+        @PathVariable Long rideId,
+        @RequestBody Location location) {
+
+    Ride updatedRide = driverService.endRide(rideId, driverId, location);
+    return ResponseEntity.ok(updatedRide);
+}
 }

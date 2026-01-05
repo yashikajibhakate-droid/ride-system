@@ -1,5 +1,7 @@
 package com.example.ride_system.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,21 +14,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ride_system.domain.ride.Ride;
 import com.example.ride_system.dto.request.CreateRideRequestDTO;
+import com.example.ride_system.dto.request.RiderCreateRequest;
 import com.example.ride_system.service.interfaces.RiderService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/rides")
-public class RideController {
+public class RiderController {
 
     private final RiderService riderService;
 
-    public RideController(RiderService riderService) {
+    public RiderController(RiderService riderService) {
         this.riderService = riderService;
     }
 
-    @PostMapping
+     @PostMapping("/rider/register")
+    public ResponseEntity<Map<String, Long>> register(
+            @Valid @RequestBody RiderCreateRequest request) {
+
+        Long riderId = riderService.registerRider(request);
+        return ResponseEntity.status(201)
+                .body(Map.of("riderId", riderId));
+    }
+
+    @PostMapping("/ride")
     public ResponseEntity<Ride> create(@Valid @RequestBody CreateRideRequestDTO dto) {
         return ResponseEntity.status(201).body(riderService.requestRide(dto));
     }

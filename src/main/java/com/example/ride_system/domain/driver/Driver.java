@@ -19,8 +19,10 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverStatus status;
 
+    
+
       @Embedded
-    private Location currentLocation;
+    private Location location;
 
     protected Driver() {}
 
@@ -44,11 +46,15 @@ public class Driver {
     // }
 
       public void updateLocation(Location location) {
-        this.currentLocation = location;
+        this.location = location;
     }
 
     public DriverStatus getStatus() {
         return status;
+    }
+
+     public Location getLocation() {
+        return location;
     }
 
     

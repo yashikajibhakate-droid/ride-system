@@ -3,7 +3,7 @@ package com.example.ride_system.domain.rider;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "riders")
+@Table(name = "rider")
 public class Rider {
 
     @Id

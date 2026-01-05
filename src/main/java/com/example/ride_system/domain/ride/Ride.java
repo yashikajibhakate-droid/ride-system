@@ -31,6 +31,22 @@ public class Ride {
     private Instant startedAt;
     private Instant endedAt;
 
+        public Long getId() { return id; }
+    public String getPickup() { return pickup; }
+    public String getDropoff() { return dropoff; }
+    public Long getRiderId() { return riderId; }
+    public Long getDriverId() { return driverId; }
+    public Instant getRequestedAt() { return requestedAt; }
+    public Instant getAcceptedAt() { return acceptedAt; }
+    public Instant getStartedAt() { return startedAt; }
+    public Instant getEndedAt() { return endedAt; }
+    public RideStatus getStatus() { return status; }
+    public double getPickupLat() { return pickupLat; }
+    public double getPickupLon() { return pickupLon; }
+    public double getDropoffLat() { return dropoffLat; }
+    public double getDropoffLon() { return dropoffLon; }
+
+
     protected Ride() {}
 
     /* Factory method – ride creation */
