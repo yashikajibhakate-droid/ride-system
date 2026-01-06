@@ -38,28 +38,25 @@ public class DriverController {
     }
 
     @PatchMapping("/{driverId}/status")
-public ResponseEntity<Map<String, String>> updateStatus(
-        @PathVariable Long driverId,
-        @RequestParam DriverStatus status) {
+    public ResponseEntity<Map<String, String>> updateStatus(
+            @PathVariable Long driverId,
+            @RequestParam DriverStatus status) {
 
-    driverService.updateStatus(driverId, status);
-    return ResponseEntity.ok(
-            Map.of("message", "Driver status updated successfully")
-    );
-}
+        driverService.updateStatus(driverId, status);
+        return ResponseEntity.ok(
+                Map.of("message", "Driver status updated successfully"));
+    }
 
+    @PatchMapping("/{driverId}/location")
+    public ResponseEntity<Map<String, String>> updateLocation(
+            @PathVariable Long driverId,
+            @Valid @RequestBody Location location) {
 
-  @PatchMapping("/{driverId}/location")
-public ResponseEntity<Map<String, String>> updateLocation(
-        @PathVariable Long driverId,
-        @RequestBody Location location) {
+        driverService.updateLocation(driverId, location);
 
-    driverService.updateLocation(driverId, location);
-
-    return ResponseEntity.ok(
-        Map.of("message", "Location updated successfully")
-    );
-}
+        return ResponseEntity.ok(
+                Map.of("message", "Location updated successfully"));
+    }
 
     @GetMapping("/{driverId}/rides")
     public List<Ride> availableRides(@PathVariable Long driverId) {
@@ -77,16 +74,16 @@ public ResponseEntity<Map<String, String>> updateLocation(
     public ResponseEntity<Ride> startRide(
             @PathVariable Long driverId,
             @PathVariable Long rideId) {
-       return ResponseEntity.ok(driverService.beginRide(rideId, driverId));
+        return ResponseEntity.ok(driverService.beginRide(rideId, driverId));
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/end")
-public ResponseEntity<Ride> endRide(
-        @PathVariable Long driverId,
-        @PathVariable Long rideId,
-        @RequestBody Location location) {
+    public ResponseEntity<Ride> endRide(
+            @PathVariable Long driverId,
+            @PathVariable Long rideId,
+            @RequestBody Location location) {
 
-    Ride updatedRide = driverService.endRide(rideId, driverId, location);
-    return ResponseEntity.ok(updatedRide);
-}
+        Ride updatedRide = driverService.endRide(rideId, driverId, location);
+        return ResponseEntity.ok(updatedRide);
+    }
 }
