@@ -33,9 +33,9 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public Long registerDriver(DriverCreateRequest request) {
         Driver driver = new Driver(
-                request.name,
-                request.email,
-                request.phone);
+                request.getName(),
+                request.getEmail(),
+                request.getPhone());
         return driverRepository.save(driver).getId();
     }
 

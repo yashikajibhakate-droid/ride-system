@@ -19,6 +19,8 @@ import com.example.ride_system.domain.ride.Ride;
 import com.example.ride_system.dto.request.DriverCreateRequest;
 import com.example.ride_system.service.interfaces.DriverService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/drivers")
 public class DriverController {
@@ -30,7 +32,7 @@ public class DriverController {
     }
 
     @PostMapping("/register")
-    public Map<String, Long> register(@RequestBody DriverCreateRequest request) {
+    public Map<String, Long> register(@Valid @RequestBody DriverCreateRequest request) {
         Long id = driverService.registerDriver(request);
         return Map.of("driverId", id);
     }
