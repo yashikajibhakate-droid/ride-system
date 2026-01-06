@@ -4,11 +4,15 @@ import com.example.ride_system.domain.ride.Ride;
 import com.example.ride_system.domain.rider.Rider;
 import com.example.ride_system.dto.request.CreateRideRequestDTO;
 import com.example.ride_system.dto.request.RiderCreateRequest;
+import com.example.ride_system.exception.ApiErrorCode;
+import com.example.ride_system.exception.BusinessException;
 import com.example.ride_system.repository.RideRepository;
 import com.example.ride_system.repository.RiderRepository;
 import com.example.ride_system.service.interfaces.RiderService;
 
 import jakarta.transaction.Transactional;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +23,7 @@ public class RiderServiceImpl implements RiderService {
     private final RiderRepository riderRepository;
 
     public RiderServiceImpl(RideRepository rideRepository,
-                            RiderRepository riderRepository) {
+            RiderRepository riderRepository) {
         this.rideRepository = rideRepository;
         this.riderRepository = riderRepository;
     }
@@ -27,15 +31,21 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public Long registerRider(RiderCreateRequest request) {
 
-         Rider rider = new Rider(
+        if (riderRepository.existsByEmail(request.getEmail())) {
+            throw new BusinessException(
+                    ApiErrorCode.RIDER_ALREADY_EXISTS,
+                    "Rider with this email already exists",
+                    HttpStatus.CONFLICT);
+        }
+
+        Rider rider = new Rider(
                 request.getName(),
                 request.getPhone(),
-                request.getEmail()
-        );
-         Rider savedRider = riderRepository.save(rider);
+                request.getEmail());
+        Rider savedRider = riderRepository.save(rider);
 
-    // ✅ extract ID from entity
-    return savedRider.getId();
+        // ✅ extract ID from entity
+        return savedRider.getId();
     }
 
     @Override
@@ -50,8 +60,7 @@ public class RiderServiceImpl implements RiderService {
                 request.getPickup(),
                 request.getDropoff(),
                 request.getPickupLocation(),
-                request.getDropoffLocation()
-        );
+                request.getDropoffLocation());
 
         return rideRepository.save(ride);
     }
@@ -59,8 +68,7 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public Ride getRideDetails(Long rideId) {
         return rideRepository.findById(rideId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Ride not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Ride not found"));
     }
 
     @Override

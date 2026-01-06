@@ -28,8 +28,9 @@ public class Driver {
 
     public Driver(String name, String phone, String email) {
         this.name = name;
-        this.phone = phone;
+        
         this.email = email;
+        this.phone = phone;
         this.status = DriverStatus.OFFLINE; // DEFAULT
     }
 

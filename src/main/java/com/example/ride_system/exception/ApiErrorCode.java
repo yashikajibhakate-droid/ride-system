@@ -1,0 +1,11 @@
+package com.example.ride_system.exception;
+
+public enum ApiErrorCode {
+  RIDER_ALREADY_EXISTS,
+    DRIVER_ALREADY_EXISTS,
+    DRIVER_PHONE_ALREADY_EXISTS,
+    DRIVER_NOT_ONLINE,
+    RIDE_NOT_FOUND,
+    INVALID_RIDE_STATE,
+    UNAUTHORIZED_ACTION
+}

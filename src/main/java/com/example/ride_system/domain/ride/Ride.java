@@ -82,8 +82,17 @@ public class Ride {
     }
 
     public void begin() {
-        if (status != RideStatus.ACCEPTED) {
+        if (status == RideStatus.REQUESTED) {
             throw new IllegalStateException("Ride not accepted yet");
+        }
+        if(status == RideStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Ride already in progress");
+        }
+        if(status == RideStatus.COMPLETED) {
+            throw new IllegalStateException("Ride already completed");
+        }
+        if(status == RideStatus.CANCELLED) {
+            throw new IllegalStateException("Ride is cancelled");
         }
         this.status = RideStatus.IN_PROGRESS;
         this.startedAt = Instant.now();
@@ -91,7 +100,7 @@ public class Ride {
 
     public void end(Location currentLocation) {
         if (status != RideStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Ride cannot be ended");
+            throw new IllegalStateException("Ride cannot be ended as it is not in progress");
         }
 
         if (!isAtDropLocation(currentLocation)) {
@@ -120,7 +129,7 @@ public class Ride {
         if (status == RideStatus.COMPLETED) {
             throw new IllegalStateException("Completed ride cannot be cancelled");
         }
-        this.status = RideStatus.CANCELLED;
+        this.status = RideStatus.DRIVER_CANCELLED;
     }
 
     private boolean isAtDropLocation(Location location) {

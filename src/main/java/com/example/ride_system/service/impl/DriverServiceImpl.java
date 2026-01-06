@@ -2,6 +2,7 @@ package com.example.ride_system.service.impl;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,8 @@ import com.example.ride_system.domain.ride.Ride;
 import com.example.ride_system.domain.ride.RideStatus;
 import com.example.ride_system.domain.rider.Rider;
 import com.example.ride_system.dto.request.DriverCreateRequest;
+import com.example.ride_system.exception.ApiErrorCode;
+import com.example.ride_system.exception.BusinessException;
 import com.example.ride_system.repository.DriverRepository;
 import com.example.ride_system.repository.RideRepository;
 import com.example.ride_system.service.interfaces.DriverService;
@@ -32,6 +35,23 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public Long registerDriver(DriverCreateRequest request) {
+        System.err.println("Registering driver with email: " + request.getEmail() + driverRepository);
+        if (driverRepository.existsByEmail(request.getEmail())) {
+            System.err.println("Driver with email " + request.getEmail() + " already exists.");
+            throw new BusinessException(
+                    ApiErrorCode.DRIVER_ALREADY_EXISTS,
+                    "Driver already registered",
+                    HttpStatus.CONFLICT);
+        }
+
+         if (driverRepository.existsByPhone(request.getPhone())) {
+        throw new BusinessException(
+                ApiErrorCode.DRIVER_PHONE_ALREADY_EXISTS,
+                "Driver with this phone already exists",
+                HttpStatus.CONFLICT
+        );
+    }
+
         Driver driver = new Driver(
                 request.getName(),
                 request.getEmail(),
@@ -52,13 +72,12 @@ public class DriverServiceImpl implements DriverService {
         driver.updateLocation(location);
     }
 
-       @Override
+    @Override
     public List<Ride> getAvailableRides(Long driverId) {
 
         // 1️⃣ Fetch driver
         Driver driver = driverRepository.findById(driverId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Driver not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Driver not found"));
 
         // 2️⃣ Driver must have location
         Location driverLocation = driver.getLocation();
@@ -67,19 +86,16 @@ public class DriverServiceImpl implements DriverService {
         }
 
         // 3️⃣ Fetch all REQUESTED rides
-        List<Ride> requestedRides =
-                rideRepository.findByStatus(RideStatus.REQUESTED);
+        List<Ride> requestedRides = rideRepository.findByStatus(RideStatus.REQUESTED);
 
         // 4️⃣ Filter by distance <= 50 meters
         return requestedRides.stream()
                 .filter(ride -> {
-                    double distance =
-                            DistanceUtil.distanceInMeters(
-                                    driverLocation.getLat(),
-                                    driverLocation.getLon(),
-                                    ride.getPickupLat(),
-                                    ride.getPickupLon()
-                            );
+                    double distance = DistanceUtil.distanceInMeters(
+                            driverLocation.getLat(),
+                            driverLocation.getLon(),
+                            ride.getPickupLat(),
+                            ride.getPickupLon());
                     return distance <= 50;
                 })
                 .toList();
