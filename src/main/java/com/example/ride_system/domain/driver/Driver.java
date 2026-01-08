@@ -1,6 +1,7 @@
 package com.example.ride_system.domain.driver;
 
 import com.example.ride_system.domain.ride.Location;
+import com.example.ride_system.dto.request.DriverCreateRequest;
 
 import jakarta.persistence.*;
 
@@ -19,16 +20,15 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverStatus status;
 
-    
-
-      @Embedded
+    @Embedded
     private Location location;
 
-    protected Driver() {}
+    protected Driver() {
+    }
 
     public Driver(String name, String phone, String email) {
         this.name = name;
-        
+
         this.email = email;
         this.phone = phone;
         this.status = DriverStatus.OFFLINE; // DEFAULT
@@ -43,10 +43,10 @@ public class Driver {
     }
 
     // public void assignRide() {
-    //     this.status = DriverStatus.ON_RIDE;
+    // this.status = DriverStatus.ON_RIDE;
     // }
 
-      public void updateLocation(Location location) {
+    public void updateLocation(Location location) {
         this.location = location;
     }
 
@@ -54,11 +54,9 @@ public class Driver {
         return status;
     }
 
-     public Location getLocation() {
+    public Location getLocation() {
         return location;
     }
-
-    
 
     public void setStatus(DriverStatus status) {
         this.status = status;
@@ -66,5 +64,11 @@ public class Driver {
 
     public Long getId() {
         return id;
+    }
+
+    public void register(String name, String email, String phone) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
     }
 }

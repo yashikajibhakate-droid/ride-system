@@ -20,7 +20,7 @@ import com.example.ride_system.service.interfaces.RiderService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/rides")
+@RequestMapping("/rider")
 public class RiderController {
 
     private final RiderService riderService;
@@ -29,7 +29,7 @@ public class RiderController {
         this.riderService = riderService;
     }
 
-     @PostMapping("/rider/register")
+     @PostMapping("/register")
     public ResponseEntity<Map<String, Long>> register(
             @Valid @RequestBody RiderCreateRequest request) {
 

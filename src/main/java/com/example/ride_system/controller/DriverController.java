@@ -22,7 +22,7 @@ import com.example.ride_system.service.interfaces.DriverService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/drivers")
+@RequestMapping("/driver")
 public class DriverController {
 
     private final DriverService driverService;

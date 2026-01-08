@@ -27,6 +27,10 @@ public class CreateRideRequestDTO {
         return riderId;
     }
 
+    public void setPickup(String pickup) {
+        this.pickup = pickup;
+    }
+
     public String getPickup() {
         return pickup;
     }
@@ -35,11 +39,26 @@ public class CreateRideRequestDTO {
         return dropoff;
     }
 
+    public void setDropoff(String dropoff) {
+        this.dropoff = dropoff;
+    }
+
     public Location getPickupLocation() {
         return pickupLocation;
     }
 
+    public void setPickupLocation(Location pickupLocation) {
+        this.pickupLocation = pickupLocation;
+    }
+    public void setDropoffLocation(Location dropoffLocation) {
+        this.dropoffLocation = dropoffLocation;
+    }
+
     public Location getDropoffLocation() {
         return dropoffLocation;
+    }
+
+    public void setRiderId(Long riderId) {
+        this.riderId = riderId;
     }
 }
