@@ -44,16 +44,24 @@ public class RiderController {
     }
 
     @GetMapping("/{rideId}")
-    public Ride get(@PathVariable Long rideId) {
+    public Ride get(@PathVariable ("rideId")Long rideId) {
         return riderService.getRideDetails(rideId);
     }
 
+    
     @PatchMapping("/{rideId}/cancel")
-    public void cancel(
-            @PathVariable Long rideId,
-            @RequestParam Long riderId) {
+    public ResponseEntity<Map<String, String>> cancel(
+                   @PathVariable("rideId") Long rideId,
+        @RequestParam("riderId") Long riderId) {
 
         riderService.cancelRide(rideId, riderId);
+        return ResponseEntity.ok().body(Map.of("message", "Ride cancelled successfully"));
     }
+    // public void cancel(
+    //         @PathVariable Long rideId,
+    //         @RequestParam Long riderId) {
+
+    //     riderService.cancelRide(rideId, riderId);
+    // }
 }
 

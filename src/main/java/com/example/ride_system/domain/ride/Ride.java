@@ -129,6 +129,9 @@ public class Ride {
         if (status == RideStatus.COMPLETED) {
             throw new IllegalStateException("Completed ride cannot be cancelled");
         }
+        if( status == RideStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Ride cannot be cancelled as it is in progress");
+        }
         this.status = RideStatus.DRIVER_CANCELLED;
     }
 

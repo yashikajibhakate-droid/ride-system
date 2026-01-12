@@ -30,7 +30,7 @@ public class DriverController {
     public DriverController(DriverService driverService) {
         this.driverService = driverService;
     }
-
+@Operation(summary = "Register a new driver")
     @PostMapping("/register")
     public Map<String, Long> register(@Valid @RequestBody DriverCreateRequest request) {
         Long id = driverService.registerDriver(request);
@@ -39,7 +39,7 @@ public class DriverController {
 
     @PatchMapping("/{driverId}/status")
     public ResponseEntity<Map<String, String>> updateStatus(
-            @PathVariable Long driverId,
+            @PathVariable("driverId") Long driverId,
             @RequestParam DriverStatus status) {
 
         driverService.updateStatus(driverId, status);
@@ -49,7 +49,7 @@ public class DriverController {
 
     @PatchMapping("/{driverId}/location")
     public ResponseEntity<Map<String, String>> updateLocation(
-            @PathVariable Long driverId,
+            @PathVariable("driverId") Long driverId,
             @Valid @RequestBody Location location) {
 
         driverService.updateLocation(driverId, location);
@@ -59,28 +59,37 @@ public class DriverController {
     }
 
     @GetMapping("/{driverId}/rides")
-    public List<Ride> availableRides(@PathVariable Long driverId) {
+    public List<Ride> availableRides(@PathVariable("driverId") Long driverId) {
         return driverService.getAvailableRides(driverId);
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/accept")
     public ResponseEntity<Ride> acceptRide(
-            @PathVariable Long driverId,
-            @PathVariable Long rideId) {
+            @PathVariable("driverId") Long driverId,
+            @PathVariable("rideId") Long rideId) {
         return ResponseEntity.ok(driverService.acceptRide(rideId, driverId));
+    }
+
+    @PatchMapping("/{driverId}/rides/{rideId}/cancel")
+    public ResponseEntity<Map<String, String>> cancelRide(
+            @PathVariable("driverId") Long driverId,
+            @PathVariable("rideId") Long rideId) {
+
+        driverService.cancelRide(rideId, driverId);
+        return ResponseEntity.ok().body(Map.of("message", "Ride cancelled successfully"));
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/start")
     public ResponseEntity<Ride> startRide(
-            @PathVariable Long driverId,
-            @PathVariable Long rideId) {
+            @PathVariable("driverId") Long driverId,
+            @PathVariable("rideId") Long rideId) {
         return ResponseEntity.ok(driverService.beginRide(rideId, driverId));
     }
 
     @PostMapping("/{driverId}/rides/{rideId}/end")
     public ResponseEntity<Ride> endRide(
-            @PathVariable Long driverId,
-            @PathVariable Long rideId,
+            @PathVariable("driverId") Long driverId,
+            @PathVariable("rideId") Long rideId,
             @RequestBody Location location) {
 
         Ride updatedRide = driverService.endRide(rideId, driverId, location);
