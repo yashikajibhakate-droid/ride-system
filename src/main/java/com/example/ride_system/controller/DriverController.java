@@ -30,7 +30,6 @@ public class DriverController {
     public DriverController(DriverService driverService) {
         this.driverService = driverService;
     }
-@Operation(summary = "Register a new driver")
     @PostMapping("/register")
     public Map<String, Long> register(@Valid @RequestBody DriverCreateRequest request) {
         Long id = driverService.registerDriver(request);
